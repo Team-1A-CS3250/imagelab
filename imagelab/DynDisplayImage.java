@@ -69,7 +69,7 @@ public class DynDisplayImage extends DisplayImage {
      */
     public void changeImage(final ImgProvider imp, final String title) {
         setTitle(title);
-        improvider = imp;
+        setImgProvider(imp);
         img = imp.getImage();
         pane = new DynaPanel(imp);
         getContentPane().add(pane, "Center");

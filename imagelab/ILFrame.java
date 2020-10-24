@@ -32,8 +32,13 @@ public abstract class ILFrame extends JFrame {
     public void byebye() {
         improvider.setInactive();
     }
-    /** @return improvider */
+    /** @return ImgProvider object. */
     protected ImgProvider getImgProvider() {
         return improvider;
+    }
+    /** Set ImgProvider object.
+     * @param imp */
+    protected void setImgProvider(final ImgProvider imp) {
+        this.improvider = imp;
     }
 }

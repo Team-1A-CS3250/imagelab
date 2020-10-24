@@ -19,7 +19,6 @@ public class DisplayImage extends ILFrame {
     private Image img;
     /** The display panel of this frame. */
     private DisPanel pane;
-
     /** Initial x-coordinate for window placement. */
     private static final int XINIT = 10;
     /** Initial y-coordinate for window placement. */
@@ -74,7 +73,7 @@ public class DisplayImage extends ILFrame {
         setTitle(title);
         setUndecorated(false);
         setBackground(new Color(RED_VALUE, GREEN_VALUE, BLUE_VALUE));
-        improvider = imp;
+        setImgProvider(imp);
         int[] pix = imp.pix;
         int[] showpix = pix;
         int pixheight = imp.pixheight;
