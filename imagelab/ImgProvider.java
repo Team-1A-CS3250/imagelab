@@ -493,31 +493,23 @@ public class ImgProvider extends JComponent {
          short[][] saturation;
          short[][] brightness;
 
-         /* Number of music channels */
+         /** Number of music channels */
          final int numChannels = 3;
-
-         /* Frequency cycles per second */
+         /** Frequency cycles per second */
          final int cyclesPerSec = 256;
-
-         /* The number of semitones in a minor third interval. */
+         /** The number of semitones in a minor third interval. */
          final int minorThird = 3;
-
-         /* The number of semitones in a perfect fourth interval. */
+         /** The number of semitones in a perfect fourth interval. */
          final int perfectFourth = 5;
-
-         /* The number of semitones in a perfect fifth interval. */
+         /** The number of semitones in a perfect fifth interval. */
          final int perfectFifth = 7;
-
-         /* The number of semitones in a minor seventh interval. */
+         /** The number of semitones in a minor seventh interval. */
          final int minorSeventh = 10;
-
-         /* Octave modifier */
+         /** Octave modifier */
          final int octaveFactor = 12;
-
-         /* Max offset to low frequency keys. */
+         /** Max offset to low frequency keys. */
          final int octaveStartOffset = -3;
-
-         /* Max offset to high frequency keys. */
+         /** Max offset to high frequency keys. */
          final int octaveEndOffset = 4;
 
          int height = bw.length;
