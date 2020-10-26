@@ -188,7 +188,8 @@ public class ImageLab {
                             "imagelab.ImageFilter");
                     } //for ja
                     if (isFilter) {
-                        ifilter = (ImageFilter) cl.getDeclaredConstructor().newInstance();
+                        ifilter = (ImageFilter)
+                            cl.getDeclaredConstructor().newInstance();
                         filters.add(ifilter);
                         JMenuItem jmi = new JMenuItem(ifilter.getMenuLabel());
                         filter.add(jmi);
@@ -261,10 +262,12 @@ public class ImageLab {
         final ImageFilter theFilter = imf;
         final JFrame myframe = frame;
         return new ActionListener() {
-            public void actionPerformed(final ActionEvent ev) {
-                if (impro == null) {
-                    JOptionPane.showMessageDialog(myframe, "You must first select an image");
-                    return;
+            public void actionPerformed(
+                final ActionEvent ev) {
+                    if (impro == null) {
+                        JOptionPane.showMessageDialog(
+                            myframe, "You must first select an image");
+                        return;
                 }
                 //System.out.println("Using impro number " + impro.getid());
                 theFilter.filter(impro);
@@ -332,7 +335,8 @@ public class ImageLab {
                 //The imgProvider holding the image
                 ImgProvider improvider = impro;
                 if (improvider == null) {
-                    JOptionPane.showMessageDialog(myframe, "First select the image to play");
+                    JOptionPane.showMessageDialog(
+                        myframe, "First select the image to play");
                     return;
                 } //if
                 improvider.play();
@@ -351,7 +355,8 @@ public class ImageLab {
             public void actionPerformed(final ActionEvent e) {
                 ImgProvider improvider = impro; // Hold the image.
                 if (improvider == null) {
-                    JOptionPane.showMessageDialog(myframe, "Select the image to save");
+                    JOptionPane.showMessageDialog(
+                        myframe, "Select the image to save");
                     return;
                 } //if
                 improvider.save();

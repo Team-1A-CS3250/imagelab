@@ -460,7 +460,8 @@ public class ImgProvider extends JComponent {
         fname = fd.getSelectedFile().getName();
         theFile = fd.getSelectedFile();
 
-        BufferedImage bufim = new BufferedImage(pixwidth, pixheight, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufim = new BufferedImage(
+            pixwidth, pixheight, BufferedImage.TYPE_INT_RGB);
         bufim.setRGB(0, 0, pixwidth, pixheight, pix, 0, pixwidth);
 
         try {
@@ -492,15 +493,32 @@ public class ImgProvider extends JComponent {
          short[][] saturation;
          short[][] brightness;
 
-         final int numChannels = 3;         // Number of music channels
-         final int cyclesPerSec = 256;      // Frequency cycles per second
-         final int minorThird = 3;          // The number of semitones in a minor third interval.
-         final int perfectFourth = 5;       // The number of semitones in a perfect fourth interval.
-         final int perfectFifth = 7;        // The number of semitones in a perfect fifth interval.
-         final int minorSeventh = 10;       // The number of semitones in a minor seventh interval.
-         final int octaveFactor = 12;       // Octive modifier
-         final int octaveStartOffset = -3;  // Max offset to low frequency keys.
-         final int octaveEndOffset = 4;     // Max offset to high frequency keys.
+         /* Number of music channels */
+         final int numChannels = 3;
+
+         /* Frequency cycles per second */
+         final int cyclesPerSec = 256;
+
+         /* The number of semitones in a minor third interval. */
+         final int minorThird = 3;
+
+         /* The number of semitones in a perfect fourth interval. */
+         final int perfectFourth = 5;
+
+         /* The number of semitones in a perfect fifth interval. */
+         final int perfectFifth = 7;
+
+         /* The number of semitones in a minor seventh interval. */
+         final int minorSeventh = 10;
+
+         /* Octave modifier */
+         final int octaveFactor = 12;
+
+         /* Max offset to low frequency keys. */
+         final int octaveStartOffset = -3;
+
+         /* Max offset to high frequency keys. */
+         final int octaveEndOffset = 4;
 
          int height = bw.length;
          int width = bw[0].length;
