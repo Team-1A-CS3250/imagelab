@@ -2,7 +2,7 @@
  * Build configuraiton for the ImageLab project.
  * Version: 1.8.2
  */
-
+ 
 plugins {
     // Apply the java plugin to add support for Java
     id 'java'

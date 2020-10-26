@@ -19,7 +19,6 @@ public class DisplayImage extends ILFrame {
     private Image img;
     /** The display panel of this frame. */
     private DisPanel pane;
-
     /** Initial x-coordinate for window placement. */
     private static final int XINIT = 10;
     /** Initial y-coordinate for window placement. */
@@ -37,7 +36,7 @@ public class DisplayImage extends ILFrame {
     /** Integer value of green in the DisplayImage background. */
     private static final int GREEN_VALUE = 255;
     /** Integer value of blue in the DisplayImage background. */
-    private static final int BLUE_VALUE =255;
+    private static final int BLUE_VALUE = 255;
     /** DisplayImage sleep timing. */
     private static final int SLEEP_TIME = 50;
     /** x-coordinate for next window. */
@@ -74,11 +73,11 @@ public class DisplayImage extends ILFrame {
         setTitle(title);
         setUndecorated(false);
         setBackground(new Color(RED_VALUE, GREEN_VALUE, BLUE_VALUE));
-        improvider = imp;
-        int[] pix = imp.pix;
+        setImgProvider(imp);
+        int[] pix = imp.getPix();
         int[] showpix = pix;
-        int pixheight = imp.pixheight;
-        int pixwidth = imp.pixwidth;
+        int pixheight = imp.getHeight();
+        int pixwidth = imp.getWidth();
         img = getToolkit().createImage(
                 new MemoryImageSource(
                     pixwidth, pixheight, showpix, 0, pixwidth));
@@ -100,7 +99,8 @@ public class DisplayImage extends ILFrame {
         }
         // Cascade subsequent windows
         xspot = ((xspot + width + XDELTA) <= XMAX) ? xspot + XDELTA : XINIT;
-        yspot = ((yspot + height + YDELTA + EXTRA_HEIGHT) <= YMAX) ? yspot + YDELTA : YINIT;
+        yspot = ((yspot + height + YDELTA
+        + EXTRA_HEIGHT) <= YMAX) ? yspot + YDELTA : YINIT;
         setBounds(xspot, yspot, width, height + EXTRA_HEIGHT);
         WindowCloser wc = new WindowCloser(this);
         this.addWindowListener(wc);

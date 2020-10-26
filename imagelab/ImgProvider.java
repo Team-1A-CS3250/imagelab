@@ -36,9 +36,9 @@ public class ImgProvider extends JComponent {
     /** true if this ImgProvider currently holds an image; false otherwise. */
     private boolean isLoaded;
     /** Image height in pixels. */
-    protected int pixheight;
+    private int pixheight;
     /** Image width in pixels. */
-    protected int pixwidth;
+    private int pixwidth;
     /** The raw image. */
     private Image img;
     /** Holders for the color and alpha components of the image. */
@@ -46,7 +46,7 @@ public class ImgProvider extends JComponent {
     /** To retrieve pixels from the image. */
     private PixelGrabber grab;
     /** Holder for the pixels from the image. */
-    protected int[] pix;
+    private int[] pix;
     /** X-axis increment used for trimming the image. */
     private int xinc = 0;
     /** Y-axis increment used for trimming the image. */
@@ -102,11 +102,11 @@ public class ImgProvider extends JComponent {
     public void setBWImage(final short[][] image) {
         int spot = 0; //index into pix
         int tmp;
-        pixheight = image.length;
-        pixwidth = image[0].length;
-        pix = new int[pixheight * pixwidth];
-        for (int row = 0; row < pixheight; row++) {
-            for (int col = 0; col < pixwidth; col++) {
+        setHeight(image.length);
+        setWidth(image[0].length);
+        setPix(new int[getHeight() * getWidth()]);
+        for (int row = 0; row < getHeight(); row++) {
+            for (int col = 0; col < getWidth(); col++) {
                 tmp = ALPHA_VALUE;
                 tmp = tmp << BITWISE_SHIFT;
                 tmp += image[row][col];
@@ -114,7 +114,7 @@ public class ImgProvider extends JComponent {
                 tmp += image[row][col];
                 tmp = tmp << BITWISE_SHIFT;
                 tmp += image[row][col];
-                pix[spot++] = tmp;
+                setPixIndex(spot++, tmp);
             }
         }
         separateColors();
@@ -134,12 +134,12 @@ public class ImgProvider extends JComponent {
         toBW();         //convert it to black and white
 
         //copy from int []pix to short [][]b and filter outliers
-        short[][] b = new short[pixheight][pixwidth];
+        short[][] b = new short[getHeight()][getWidth()];
         int spot = 0;
         short tmp;
-        for (int r = 0; r < pixheight; r++) {
-            for (int c = 0; c < pixwidth; c++) {
-                tmp = (short) (pix[spot++] & ALPHA_VALUE);
+        for (int r = 0; r < getHeight(); r++) {
+            for (int c = 0; c < getWidth(); c++) {
+                tmp = (short) (getPixIndex(spot++) & ALPHA_VALUE);
                 b[r][c] = tmp;
             }
         }
@@ -164,9 +164,9 @@ public class ImgProvider extends JComponent {
             return;
             //System.exit(-1);
         }
-        pix = (int[]) grab.getPixels();
-        pixwidth = img.getWidth(null) - xinc;
-        pixheight = img.getHeight(null) - yinc;
+        setPix((int[]) grab.getPixels());
+        setWidth(img.getWidth(null) - xinc);
+        setHeight(img.getHeight(null) - yinc);
         isLoaded = true;
         separateColors();
         if (all) {
@@ -195,7 +195,7 @@ public class ImgProvider extends JComponent {
         int alphaToBW, redToBW, greenToBW, blueToBW, blackToBW;
 
         for (int i = 0; i < pix.length; i++) {
-            int num = pix[i];
+            int num = getPixIndex(i);
             final int numOfValues = 3;
             blueToBW = num & ALPHA_VALUE;
             num = num >> BITWISE_SHIFT;
@@ -209,7 +209,7 @@ public class ImgProvider extends JComponent {
             num = (num << BITWISE_SHIFT) + blackToBW;
             num = (num << BITWISE_SHIFT) + blackToBW;
             num = (num << BITWISE_SHIFT) + blackToBW;
-            pix[i] = num;
+            setPixIndex(i, num);
         }
         if (all) {
             showPix("Black and White");
@@ -242,7 +242,8 @@ public class ImgProvider extends JComponent {
         }
         //System.out.println("ImgProvider:showPix:  after readIn");
         img = getToolkit().createImage(
-                new MemoryImageSource(pixwidth, pixheight, pix, 0, pixwidth));
+                new MemoryImageSource(
+                    getWidth(), getHeight(), getPix(), 0, getWidth()));
         //System.out.println("ImgProvider:showPix:  before displayImage");
         DisplayImage dis = new DisplayImage(this, name, true);
         //System.out.println("ImgProvider:showPix:  after displayImage");
@@ -256,17 +257,17 @@ public class ImgProvider extends JComponent {
      * Pull the image apart into its RGB and Alpha components.
      */
     void separateColors() {
-        if (pix == null) {
+        if (getPix() == null) {
             return;
         }
-        alpha = new short[pixheight][pixwidth];
-        red = new short[pixheight][pixwidth];
-        green = new short[pixheight][pixwidth];
-        blue = new short[pixheight][pixwidth];
+        alpha = new short[getHeight()][getWidth()];
+        red = new short[getHeight()][getWidth()];
+        green = new short[getHeight()][getWidth()];
+        blue = new short[getHeight()][getWidth()];
         int spot = 0;       //index into pix
-        for (int r = 0; r < pixheight; r++) {
-            for (int c = 0; c < pixwidth; c++) {
-                int num = pix[spot++];
+        for (int r = 0; r < getHeight(); r++) {
+            for (int c = 0; c < getWidth(); c++) {
+                int num = getPixIndex(spot++);
                 blue[r][c] = (short) (num & ALPHA_VALUE);
                 num = num >> BITWISE_SHIFT;
                 green[r][c] = (short) (num & ALPHA_VALUE);
@@ -288,17 +289,17 @@ public class ImgProvider extends JComponent {
      */
     public void setColors(final short[][] rd, final short[][] g,
                           final short[][] b, final short[][] al) {
-        pixheight = rd.length;
-        pixwidth = rd[0].length;
-        red = new short[pixheight][pixwidth];
-        green = new short[pixheight][pixwidth];
-        blue = new short[pixheight][pixwidth];
-        alpha = new short[pixheight][pixwidth];
-        pix = new int[pixwidth * pixheight];
+        setHeight(rd.length);
+        setWidth(rd[0].length);
+        red = new short[getHeight()][getWidth()];
+        green = new short[getHeight()][getWidth()];
+        blue = new short[getHeight()][getWidth()];
+        alpha = new short[getHeight()][getWidth()];
+        setPix(new int[getWidth() * getHeight()]);
         int tmp;
         int spot = 0;
-        for (int r = 0; r < pixheight; r++) {
-            for (int c = 0; c < pixwidth; c++) {
+        for (int r = 0; r < getHeight(); r++) {
+            for (int c = 0; c < getWidth(); c++) {
                 red[r][c] = rd[r][c];
                 green[r][c] = g[r][c];
                 blue[r][c] = b[r][c];
@@ -310,7 +311,7 @@ public class ImgProvider extends JComponent {
                 tmp += green[r][c];
                 tmp = tmp << BITWISE_SHIFT;
                 tmp += blue[r][c];
-                pix[spot++] = tmp;
+                setPixIndex(spot++, tmp);
             }
         }
         isLoaded = true;
@@ -385,6 +386,17 @@ public class ImgProvider extends JComponent {
     }
 
     /**
+     * Setter method for pixwidth.
+     *
+     * @param newWidth width of the image
+     * @set   image width in pixels
+     */
+    public void setWidth(final int newWidth) {
+        pixwidth = newWidth;
+        return;
+    }
+
+    /**
      * retrieve the image's width.
      *
      * @return Width of Image.
@@ -403,6 +415,17 @@ public class ImgProvider extends JComponent {
     }
 
     /**
+     * Setter method for pixheight.
+     *
+     * @param newHeight image height in pixels.
+     * @set   image height in pixels.
+     */
+    public void setHeight(final int newHeight) {
+        pixheight = newHeight;
+        return;
+    }
+
+    /**
      * Retrieve the image's raw image.
      * Note that img is not always consistent with RGBA arrays.
      *
@@ -410,6 +433,48 @@ public class ImgProvider extends JComponent {
      */
     public Image getImage() {
         return img;
+    }
+
+   /**
+    * Setter method for pixel holder.
+    *
+    * @param newPix size of pixel holder.
+    * @set   size of pixel holder.
+    */
+    public void setPix(final int[] newPix) {
+        pix = newPix;
+        return;
+    }
+
+   /**
+    * Setter method for specific pixels.
+    *
+    * @param index   index of pixel in holder.
+    * @param set     integer to set pixel to.
+    * @set   color of pixel at index.
+    */
+    public void setPixIndex(final int index, final int set) {
+        pix[index] = set;
+        return;
+    }
+
+    /**
+     * Retrieve the pixel holder.
+     *
+     * @return pixel holder
+     */
+    public int[] getPix() {
+        return pix;
+    }
+
+    /**
+     * Retrieve the current pixel.
+     *
+     * @param index  index of current pixel
+     * @return       pixel at holder index
+     */
+    public int getPixIndex(final int index) {
+        return pix[index];
     }
 
     /**
@@ -427,7 +492,7 @@ public class ImgProvider extends JComponent {
     public void setInactive() {
         if (lab != null) {
             lab.setInactive(this);
-            ImageLab.impro = null;
+            ImageLab.setImpro(null);
         } else {
             System.err.println("*** error ** ImgProvider:setInactive - no "
                     + "lab");
@@ -460,8 +525,9 @@ public class ImgProvider extends JComponent {
         fname = fd.getSelectedFile().getName();
         theFile = fd.getSelectedFile();
 
-        BufferedImage bufim = new BufferedImage(pixwidth, pixheight, BufferedImage.TYPE_INT_RGB);
-        bufim.setRGB(0, 0, pixwidth, pixheight, pix, 0, pixwidth);
+        BufferedImage bufim = new BufferedImage(
+            getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+        bufim.setRGB(0, 0, getWidth(), getHeight(), getPix(), 0, getWidth());
 
         try {
             if (!ImageIO.write(bufim, "jpeg", theFile)) {
@@ -492,15 +558,24 @@ public class ImgProvider extends JComponent {
          short[][] saturation;
          short[][] brightness;
 
-         final int numChannels = 3;         // Number of music channels
-         final int cyclesPerSec = 256;      // Frequency cycles per second
-         final int minorThird = 3;          // The number of semitones in a minor third interval.
-         final int perfectFourth = 5;       // The number of semitones in a perfect fourth interval.
-         final int perfectFifth = 7;        // The number of semitones in a perfect fifth interval.
-         final int minorSeventh = 10;       // The number of semitones in a minor seventh interval.
-         final int octaveFactor = 12;       // Octive modifier
-         final int octaveStartOffset = -3;  // Max offset to low frequency keys.
-         final int octaveEndOffset = 4;     // Max offset to high frequency keys.
+         /** Number of music channels */
+         final int numChannels = 3;
+         /** Frequency cycles per second */
+         final int cyclesPerSec = 256;
+         /** The number of semitones in a minor third interval. */
+         final int minorThird = 3;
+         /** The number of semitones in a perfect fourth interval. */
+         final int perfectFourth = 5;
+         /** The number of semitones in a perfect fifth interval. */
+         final int perfectFifth = 7;
+         /** The number of semitones in a minor seventh interval. */
+         final int minorSeventh = 10;
+         /** Octave modifier */
+         final int octaveFactor = 12;
+         /** Max offset to low frequency keys. */
+         final int octaveStartOffset = -3;
+         /** Max offset to high frequency keys. */
+         final int octaveEndOffset = 4;
 
          int height = bw.length;
          int width = bw[0].length;
@@ -581,14 +656,14 @@ public class ImgProvider extends JComponent {
             readinImage();
         }
         System.out.println("ImgProvider:showSlow: After readinImage");
-        img = getToolkit().createImage(
-                new MemoryImageSource(pixwidth, pixheight, pix, 0, pixwidth));
+        img = getToolkit().createImage(new MemoryImageSource(
+            getWidth(), getHeight(), getPix(), 0, getWidth()));
         DynDisplayImage dImage1 = new DynDisplayImage(this, name, true);
         dImage1.setVisible(true);
         dImage1.repaint();
         System.out.println("ImgProvider:showSlow: Constructed DynaPanel");
         System.out.println("ImgProvider:showSlow: size is ("
-                + pixwidth + ", " + pixheight + ")");
+                + getWidth() + ", " + getHeight() + ")");
         try {
             Thread.sleep(displaySleepTime);  //give image time to display
         } catch (Exception e) {
@@ -596,5 +671,4 @@ public class ImgProvider extends JComponent {
         dImage1.changeImage(this, "Second Pass");
         System.out.println("ImgProvider:showSlow: Second Pass");
     }
-
 }
