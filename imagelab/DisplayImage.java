@@ -75,10 +75,10 @@ public class DisplayImage extends ILFrame {
         setUndecorated(false);
         setBackground(new Color(RED_VALUE, GREEN_VALUE, BLUE_VALUE));
         improvider = imp;
-        int[] pix = imp.pix;
+        int[] pix = imp.getPix();
         int[] showpix = pix;
-        int pixheight = imp.pixheight;
-        int pixwidth = imp.pixwidth;
+        int pixheight = imp.getHeight();
+        int pixwidth = imp.getWidth();
         img = getToolkit().createImage(
                 new MemoryImageSource(
                     pixwidth, pixheight, showpix, 0, pixwidth));
