@@ -1,9 +1,13 @@
 package imagelab;
 
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import java.awt.Image;
 import java.awt.Color;
 import java.awt.image.MemoryImageSource;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.FileDialog;
 
 /**
  * Graphics frame used to display an image.
@@ -44,6 +48,10 @@ public class DisplayImage extends ILFrame {
     private static int xspot = XMAX;
     /** y-coordinate for next window. */
     private static int yspot = YMAX;
+
+    /** Accessible menu bar for DisplayImage. */
+    private static JMenuBar myMenuBar;
+
 
     /**
      * This constructor takes the image object to display
@@ -104,11 +112,12 @@ public class DisplayImage extends ILFrame {
         setBounds(xspot, yspot, width, height + EXTRA_HEIGHT);
         WindowCloser wc = new WindowCloser(this);
         this.addWindowListener(wc);
-        JMenuBar myMenuBar = new JMenuBar();
+
+        myMenuBar = new JMenuBar();
         myMenuBar.add(ImageLab.newFileMenu(this));
         myMenuBar.add(ImageLab.newFilterMenu());
+
         setJMenuBar(myMenuBar);
         setVisible(true);
     }
-
 } //class

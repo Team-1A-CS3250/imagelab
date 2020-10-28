@@ -41,7 +41,7 @@ public class ImageLab {
     /** Holds all open images (ImgProvider objects). */
     private static List<ImgProvider> images = new ArrayList<ImgProvider>();
 
-    /** The directory that holds filter classes.  (TODO) */
+    /** The directory that holds filter classes.   */
     private static String filterDir = FILTER_DIR;
 
     /** Holds the actual filter objects. */
@@ -149,6 +149,11 @@ public class ImageLab {
         JMenuItem save = new JMenuItem("Save", 'S');
         file.add(save);
         save.addActionListener(makeSaveListener());
+
+        JMenuItem findFilter = new JMenuItem("Configure Filter Directory", 'F');
+        file.add(findFilter);
+        findFilter.addActionListener(makeOpenFilterDirListener());
+
         JMenuItem quit = new JMenuItem("Quit", 'Q');
         file.add(quit);
         quit.addActionListener(new ActionListener() {
@@ -158,51 +163,9 @@ public class ImageLab {
                                    }
                                }
         );
-        JMenu filter = new JMenu("Filter");
-        mbar.add(filter);
-        //Find filters and build corresponding menu items.
-        //Look at each .class file in filterDir.
-        //Do the classForName stuff and enter into filter menu.
-        //System.out.println("**********finding filters***********");
-        FileSystemView fsv = FileSystemView.getFileSystemView();
-        //File [] fil = fsv.getFiles(new File("."),true);
-        File[] fil = fsv.getFiles(new File(filterDir), true);
-        //System.out.println("Found " + fil.length + " possible filters");
-        String clName = " ";        //holds name of class
-        for (int k = 0; k < fil.length; k++) {
-            if (fil[k].getName().endsWith("class")) {
-                Class<?> cl;
-                ImageFilter ifilter;
-                try {
-                    clName = fil[k].getName();
-                    int spot = clName.lastIndexOf(".");
-                    //clName = clName.substring(0,spot);
-                    clName = "filters." + clName.substring(0, spot);
-                    //System.out.println("Trying: " + clName);
-                    cl = Class.forName(clName);
-                    //System.out.println("Class for name is: " + cl);
-                    Class<?>[] interfaces = cl.getInterfaces();
-                    boolean isFilter = false;
-                    for (int j = 0; j < interfaces.length; j++) {
-                        isFilter |= interfaces[j].getName().equals(
-                            "imagelab.ImageFilter");
-                    } //for ja
-                    if (isFilter) {
-                        ifilter = (ImageFilter) cl.getDeclaredConstructor().newInstance();
-                        filters.add(ifilter);
-                        JMenuItem jmi = new JMenuItem(ifilter.getMenuLabel());
-                        filter.add(jmi);
-                        jmi.addActionListener(makeActionListener(
-                                (filters.get(filters.size() - 1))));
-                    } //if
-                } catch (Exception bigEx) {
-                    System.err.println("Error in buildMenus, k = " + k);
-                    System.err.println(">>> " + bigEx);
-                } //catch
-            } //if
-
-        } //for k
-
+        
+        mbar.add(newFilterMenu());
+        
         return mbar;
     } //buildMenus
 
@@ -236,19 +199,61 @@ public class ImageLab {
     }
 
     /**
-     * Return a Filter menu for a single image.
+     * Return a Filter menu with the filters found in the location selected.
      * Provides access to all filters.
      *
      * @return the new Filter menu
      */
     public static JMenu newFilterMenu() {
-        JMenu filterMenu = new JMenu("Filter");
-        for (int i = 0; i < filters.size(); i++) {
-            JMenuItem jmi = new JMenuItem(filters.get(i).getMenuLabel());
-            filterMenu.add(jmi);
-            jmi.addActionListener(makeActionListener(filters.get(i)));
-        }
-        return filterMenu;
+
+        //Find filters and build corresponding menu items.
+        //Look at each .class file in filterDir.
+        //Do the classForName stuff and enter into filter menu.
+        //System.out.println("**********finding filters***********");
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        //File [] fil = fsv.getFiles(new File("."),true);
+        File[] fil = fsv.getFiles(new File(filterDir), true);
+
+        //System.out.println("Found " + fil.length + " possible filters");
+        String clName = " ";        //holds name of class
+
+        JMenu filter = new JMenu("Filter");
+
+        for (int k = 0; k < fil.length; k++) {
+            if (fil[k].getName().endsWith("class")) {
+                Class<?> cl;
+                ImageFilter ifilter;
+                try {
+                    clName = fil[k].getName();
+                    int spot = clName.lastIndexOf(".");
+                    //clName = clName.substring(0,spot);
+                    clName = "filters." + clName.substring(0, spot);
+                    //System.out.println("Trying: " + clName);
+                    cl = Class.forName(clName);
+                    System.out.println("Class for name is: " + cl);
+                    Class<?>[] interfaces = cl.getInterfaces();
+                    boolean isFilter = false;
+                    for (int j = 0; j < interfaces.length; j++) {
+                        isFilter |= interfaces[j].getName().equals(
+                            "imagelab.ImageFilter");
+                    } //for ja
+                    if (isFilter) {
+                        ifilter = (ImageFilter) cl.getDeclaredConstructor().newInstance();
+                        filters.add(ifilter);
+                        JMenuItem jmi = new JMenuItem(ifilter.getMenuLabel());
+                        filter.add(jmi);
+                        jmi.addActionListener(makeActionListener(
+                                (filters.get(filters.size() - 1))));
+                    } //if
+                } catch (Exception bigEx) {
+                    System.err.println("Error in buildMenus, k = " + k);
+                    System.err.println(">>> " + bigEx);
+                } //catch
+            } //if
+
+        } //for k
+
+        return filter;
     }
 
     /**
@@ -274,6 +279,27 @@ public class ImageLab {
             }
         };
     } //makeActionListener
+
+    /**
+     * Create an ActionListener for selecting the filter directory.
+     *
+     * @return the ActionListener used to perform opening the filter directory
+     */
+    public static ActionListener makeOpenFilterDirListener() {
+        return new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                FileDialog fd;
+                fd = new FileDialog(frame, "Pick a directory", FileDialog.LOAD);
+                fd.setVisible(true);
+                filterDir = fd.getDirectory();
+                System.out.println("Listener - The directory name is " + filterDir);
+                menubar.remove(1);
+                menubar.add(newFilterMenu());
+                frame.setJMenuBar(menubar);
+        
+            } //actionPerformed
+        };
+    } // makeOpenFilterDirListener
 
     /**
      * Create an ActionListener for opening an image file.
