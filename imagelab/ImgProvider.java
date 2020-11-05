@@ -526,8 +526,10 @@ public class ImgProvider extends JComponent {
         theFile = fd.getSelectedFile();
 
         BufferedImage bufim = new BufferedImage(
+
             getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         bufim.setRGB(0, 0, getWidth(), getHeight(), getPix(), 0, getWidth());
+
 
         try {
             if (!ImageIO.write(bufim, "jpeg", theFile)) {
