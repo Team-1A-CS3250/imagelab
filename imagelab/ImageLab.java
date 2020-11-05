@@ -8,6 +8,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.FileDialog;
 import java.awt.Container;
@@ -288,10 +289,15 @@ public class ImageLab {
     public static ActionListener makeOpenFilterDirListener() {
         return new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
-                FileDialog fd;
-                fd = new FileDialog(frame, "Pick a directory", FileDialog.LOAD);
-                fd.setVisible(true);
-                filterDir = fd.getDirectory();
+                JFileChooser fd;
+                fd = new JFileChooser();
+                fd.setDialogTitle("Pick Filter Folder");
+                fd.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                
+                if (fd.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) { 
+                    filterDir = fd.getSelectedFile().getAbsolutePath();
+                }                
+                
                 System.out.println("Listener - The directory name is " + filterDir);
                 menubar.remove(1);
                 menubar.add(newFilterMenu());
